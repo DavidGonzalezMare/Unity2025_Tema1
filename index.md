@@ -2,14 +2,14 @@
 # Tema 1. Primer contacto con 2D
 
 1. [Nuestro primer Proyecto](#_apartado1)
+   
 2. [El Entorno de Unity](#_apartado2)
 3. [Imagen de fondo](#_apartado3)
 4. [Nave. Nuestro primer script](#_apartado4)
-5.	Creación de un enemigo con movimiento independiente.	20
-Más enemigos. Grupos de objetos.	21
-6.	Primer contacto con los prefabs.	23
-7.	Un Sprite animado.	24
-8.	Aplicando cambios al Prefab	26
+5. [Creación de un enemigo con movimiento independiente](#_apartado5)
+6. [Primer contacto con los prefabs](#_apartado6)
+7. [Un Sprite animado](#_apartado7)
+8. [Aplicando cambios al Prefab](#_apartado8)
 9.	Editar propiedades desde el inspector.	27
 10.	RigidBody 2d	28
 Comprobación de colisiones. BoxCollider2D	30
@@ -133,7 +133,7 @@ Podemos también cambiar el color de fondo de la cámara para, por ejemplo, tene
 Utilizamos para ello la propiedad **Background**.
 Debemos ser cuidadosos a la hora de no hacer cambios durante la ejecución del juego, ya que puede ocurrir que esos cambios no se mantengan al detener la ejecución.
 
-# 3. <a name="_apartado3"></a>Nave. Nuestro primer script.
+# 4. <a name="_apartado4"></a>Nave. Nuestro primer script.
 
 Vamos a añadir una imagen que representará la nave que vamos a manejar.
 Para ello inicialmente añadimos su imagen a la carpeta **Sprites** dentro de **Project**.
@@ -195,12 +195,11 @@ E instalar los componentes para Desarrollo de juego con Unity:
 
 Volviendo de nuevo al **Script** aparece la clase `Nave` que hereda de `MonoBehaviour` y con dos métodos: `Start` (se lanza al crear el objeto), y `Update` (que se lanza una vez para cada fotograma del juego).
 
-Para mover la nave podríamos mirar las teclas individuales, pero en este caso es más útil mirar el desplazamiento horizontal que haya hecho el usuario con las teclas tanto las WASD como las flechas del teclado comprobando el valor de `Input.GetAxis(“Horizontal”)`:
+Para mover la nave podríamos mirar las teclas individuales, pero en este caso es más útil mirar el desplazamiento horizontal que haya hecho el usuario con las teclas tanto las WASD como las flechas del teclado:
 
 ```csharp
 float horizontal = Input.GetAxis("Horizontal");
 ```
-
 Ese valor será negativo si el usuario ha indicado que desea moverse hacia la izquierda y positivo si ha indicado que desea moverse hacia la derecha. 
 
 En el caso del teclado, los valores serían -1 o +1 (o 0, si no se ha indicado movimiento), pero en un joystick o gamepad analógico, podría haber valores intermedios (por ejemplo, 0.35). Si no deseamos valores intermedios, sino sólo -1, 0, +1, podríamos usar `Input.GetAxisRaw`.
@@ -213,7 +212,52 @@ Utilizaremos `transform.Translate` indicando el desplazamiento en X (horizontal)
 transform.Translate(horizontal, 0, 0);
 ```
 
+El problema es que en las nuevas versiones de Unity esta línea no funcionaría ya que ahora por defecto se utiliza el nuevo **Input System**.
+
+El código para poder hacer lo que queremos sería el siguiente:
+
+```csharp
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class Nave : MonoBehaviour
+{
+    // Objeto al que le asignaremos el asset con el Input System
+    public InputActionAsset inputActions;
+    private InputAction moveAction;
+    private float velocidad = 2;
+
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        // Recogemos el mapa de acciones asignadas al Player
+        var playerActionMap = inputActions.FindActionMap("Player");
+
+        // Recogemos la acción mover
+        moveAction = playerActionMap.FindAction("Move");
+        moveAction.Enable();
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Vector2 move = moveAction.ReadValue<Vector2>();
+        // Si el usuario mueve en horizontal
+        float horizontal = move.x;
+
+        transform.Translate(horizontal, 0, 0);
+    }
+}
+```
+
 Para comprobar el resultado tendremos que **Grabar los cambios** en Visual Studio.
+
+Y debemos asignar **en el inspector** sobre el Script del objeto Nave, el asset del nuevo Input System que se creó por defecto al crear el proyecto:
+
+![Visual Studio Installer](./images/imagen28.jpg)
+
 
 Si probamos el juego ahora, veremos que el movimiento resultante es demasiado rápido, ya que dependemos de los fotogramas por segundo.
 
@@ -262,51 +306,166 @@ Para utilizar ese valor en nuestros juegos como forma de lograr una velocidad es
 Quedaría de la siguiente forma el Script:
 
 ```csharp
+using UnityEngine;
+using UnityEngine.InputSystem;
+
 public class Nave : MonoBehaviour
 {
+    // Objeto al que le asignaremos el asset con el Input System
+    public InputActionAsset inputActions;
+    private InputAction moveAction;
     private float velocidad = 2;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        // Recogemos el mapa de acciones asignadas al Player
+        var playerActionMap = inputActions.FindActionMap("Player");
+
+        // Recogemos la acción mover
+        moveAction = playerActionMap.FindAction("Move");
+        moveAction.Enable();
     }
 
     // Update is called once per frame
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
+        Vector2 move = moveAction.ReadValue<Vector2>();
+        // Si el usuario mueve en horizontal
+        float horizontal = move.x;
 
         transform.Translate(horizontal * velocidad * Time.deltaTime, 0, 0);
     }
 }
 ```
 
+# 5. <a name="_apartado5"></a>Creación de un enemigo con movimiento independiente.
+
+Vamos a crear un enemigo que se va a mover por sí mismo. Los pasos para hacerlo son similares a los vistos para crear la nave:
+
+- Arrastrar su imagen a la carpeta **Sprites**.
+  
+- Crear un objeto a partir de esa imagen, y si es necesario cambiarle el nombre.
+- Elegir su orden en la capa actual con la propiedad **Order in Layer**. De momento nos basta que quede por encima del fondo.
+- Elegir su posición inicial en la pantalla.
+- Crear un script para controlar su comportamiento. En ese script le daremos un movimiento con una velocidad determinada y cambiaremos de signo la velocidad cuando llegue a los bordes.
+- Moveremos ese script a la carpeta de **Scripts**.
+
+Si queremos que se mueva en diagonal, de modo que recorra una buena parte de la superficie de la pantalla y que pueda llegar a tocar a nuestra nave (lo que nos permitirá aprender a comprobar colisiones), podríamos preparar una velocidad en X y otra velocidad en Y, sumarlas a la posición del enemigo y cambiar su signo si alcanza algún extremo de la pantalla.
+
+El script podría ser algo así:
+
+```csharp
+public class Enemigo : MonoBehaviour
+{
+    private float velocidadX = 2;
+    private float velocidadY = -1.1f;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        transform.Translate(velocidadX * Time.deltaTime,
+                            velocidadY * Time.deltaTime, 0);
+        if ((transform.position.x < -4) || (transform.position.x > 4))
+            velocidadX = -velocidadX;
+        if ((transform.position.y < -2.5) || (transform.position.y > 2.5))
+            velocidadY = -velocidadY;
+
+    }
+}
+```
+
+Para las coordenadas máximas y mínimas en las que puede moverse, se puede comprobar la “rejilla” que aparece superpuesta en la escena, o bien directamente mover algún elemento, como nuestra nave, con el ratón (tras escoger la herramienta de “Mover”) a distintos puntos de la pantalla y ver qué coordenadas aparecen en el Inspector.
+
+El centro de la pantalla coincide inicialmente con la posición (0,0), las coordenadas X crecen hacia la derecha y las Y crecen hacia arriba. Por ejemplo, en el caso de nuestro juego, tras ajustar el tamaño de la cámara, la Y de la zona visible en la cámara va desde -3 hasta +3, mientras que la X va aproximadamente desde -5 hasta +5.
+
+## Más enemigos. Grupos de objetos.
+
+Una posible forma de aumentar el número de objetos (enemigos en este caso), es duplicar a partir del primero en la jerarquía, mediante el botón derecho o bien con la combinación de teclas Ctrl + D:
+
+![Duplicar](./images/imagen29.jpg)
+
+Los objetos quedarán al duplicarlos en la misma posición que el objeto original. Podemos moverlos:
+
+![Duplicado](./images/imagen30.jpg)
+
+De momento añadiremos hasta tener 4 enemigos en total. Más adelante veremos otra forma más adecuada de realizar esto…
+
+Conforme se vayan añadiendo objetos la jerarquía puede quedar algo saturada. Podemos crear un objeto vacío (botón derecho sobre la jerarquía, **Create Empty**) darle un nombre, por ejemplo, Enemigos, y arrastrar los enemigos a él:
+
+![Grupo objetos](./images/imagen31.jpg)
+
+Cuando creemos un objeto vacío para poner en su interior otros objetos, es interesante hacer un reset de sus coordenadas, ya que las coordenadas de los objetos interiores las pone de manera “relativa”.
 
 
+# 6. <a name="_apartado6"></a>Primer contacto con los prefabs.
+
+Duplicar los objetos como hemos visto tiene un problema importante. Si en un momento dado nos interesa hacer algún cambio tendríamos que ir a los 4 objetos y hacerlo uno por uno. Imaginemos por ejemplo el caso que no hubiéramos puesto todavía el Script o quisiéramos ponerle una animación.
+
+Para evitar ese problema podemos crear **prefabs**. Los prefabs son algo así como objetos prefabricados, a partir de los cuales podremos después crear nuevos objetos.
+
+- En primer lugar, vamos a crear en el proyecto una **nueva carpeta llamada Prefabs** que nos va a permitir tener ordenado nuestros elementos. Borrar también los 3 enemigos nuevos que habíamos creado.
+  
+- A continuación, vamos a arrastrar el objeto Enemigo desde la Jerarquía, a la nueva carpeta Prefabs. Esta es la forma de crear el prefab y veremos como nuestro objeto Enemigo en la jerarquía cambia a color azul, indicando que está basado en un prefab.
+  
+![Carpeta prefabs](./images/imagen32.jpg)
+
+- Si ahora queremos crear objetos basados en ese prefab, tendremos que hacer el **proceso inverso** y arrastrar desde la carpeta Prefabs a nuestra Jerarquía (o bien a la escena):
+
+![Crear de prefab](./images/imagen33.jpg)
+
+A continuación, veremos cómo modificar todos los elementos basados en un prefab, y más adelante como crear objetos desde código, en vez desde el diseño.
 
 
+# 7. <a name="_apartado7"></a>Un sprite animado.
 
+En este apartado vamos a iniciarnos en conseguir animar nuestros objetos.
 
+Podemos hacer que los objetos del juego tengan una secuencia de fotogramas que darán una sensación de movimiento. De momento únicamente vamos a *animar* con dos imágenes. 
 
+Abriremos la ventana de animación desde el menú **Windows->Animation->Animation** (no Animator):
 
+![Animation](./images/imagen34.jpg)
 
+Aparecerá la ventana Animation y si tenemos seleccionado algún objeto o lo hacemos ahora aparecerá un botón Create:
 
+![Animation](./images/imagen35.jpg)
 
+Al pulsar el botón **Create** daremos un nombre (`enemigoVolando`) a nuestra animación, aprovechando para crear y guardar la animación en una carpeta llamada **Animation** (dentro de **Assets**).
 
+A continuación, seleccionaremos de la carpeta **Sprites** las dos o más imágenes que tenemos preparadas y las arrastraremos debajo de la línea de tiempo:
 
+![Animation](./images/imagen36.jpg)
 
+Por cada fotograma que introduzcamos aparecerán dos rombos azules, que podremos desplazar para cambiar el tiempo de cada uno de ellos, para que la animación sea más o menos rápida.
 
+Tenemos un botón Play que nos permite ver cómo está quedando la animación.
+De momento solo tendrá animación el objeto que hemos elegido. En el siguiente apartado veremos cómo aplicar esta animación al resto de los enemigos.
 
+En temas posteriores ampliaremos la utilización de animaciones.
 
+# 8. <a name="_apartado8"></a>Aplicando cambios al prefab.
 
+Como hemos visto en el apartado anterior los cambios que se hacen en un objeto (por ejemplo, aplicarle una animación), solamente se aplican a ese objeto.
 
+Si queremos que ese cambio se aplique a **todos** los enemigos, lo podemos hacer aplicando los **cambios al Prefab** en el que se basan.
+Si seleccionamos el enemigo que contiene la animación, podemos ver en el Inspector que la tiene, sin embargo, el resto no.
 
+En la parte superior del inspector nos aparece indicado que ese objeto está basado en un prefab:
 
+![Cambios Prefab](./images/imagen37.jpg)
 
+Si desplegamos **Overrides** nos permite aplicar los cambios que hemos realizado sobre el objeto al prefab. O revertirlos…
 
+![Cambios Prefab](./images/imagen38.jpg)
 
-
+Al aplicarlo, todos los demás enemigos, que están basados en el prefab, también tendrán la animación, y si creamos algún enemigo nuevo, a partir del prefab, la tendrán también.
 
 
 
