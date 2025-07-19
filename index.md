@@ -1,27 +1,26 @@
 ﻿
 # Tema 1. Primer contacto con 2D
 
-1. [Nuestro primer Proyecto](#_apartado1)
-   
-2. [El Entorno de Unity](#_apartado2)
-3. [Imagen de fondo](#_apartado3)
-4. [Nave. Nuestro primer script](#_apartado4)
-5. [Creación de un enemigo con movimiento independiente](#_apartado5)
-6. [Primer contacto con los prefabs](#_apartado6)
-7. [Un Sprite animado](#_apartado7)
-8. [Aplicando cambios al Prefab](#_apartado8)
-9.	Editar propiedades desde el inspector.	27
-10.	RigidBody 2d	28
-Comprobación de colisiones. BoxCollider2D	30
-Detección de colisiones (Trigger)	31
-Movimiento del disparo. GetComponent.	34
-Destruir enemigos.	36
-12.	Explosión usando un sistema de partículas.	38
-13.	Reproducir un sonido	43
-14.	Disparo de enemigos. Corrutinas.	45
-15.	Interfaz de usuario	47
-16.	Pantalla de bienvenida.	50
-17.	Mejoras propuestas.	54
+- [Tema 1. Primer contacto con 2D](#tema-1-primer-contacto-con-2d)
+- [1.  Nuestro primer Proyecto](#1--nuestro-primer-proyecto)
+- [2. El Entorno de Unity](#2-el-entorno-de-unity)
+- [3. Imagen de fondo](#3-imagen-de-fondo)
+- [4. Nave. Nuestro primer script.](#4-nave-nuestro-primer-script)
+  - [Moviendo la nave. Nuestro primer Script.](#moviendo-la-nave-nuestro-primer-script)
+  - [Movimiento de la nave independiente del equipo](#movimiento-de-la-nave-independiente-del-equipo)
+- [5. Creación de un enemigo con movimiento independiente.](#5-creación-de-un-enemigo-con-movimiento-independiente)
+  - [Más enemigos. Grupos de objetos.](#más-enemigos-grupos-de-objetos)
+- [6. Primer contacto con los prefabs.](#6-primer-contacto-con-los-prefabs)
+- [7. Un sprite animado.](#7-un-sprite-animado)
+- [8. Aplicando cambios al prefab.](#8-aplicando-cambios-al-prefab)
+- [9. Editar propiedades desde el inspector.](#9-editar-propiedades-desde-el-inspector)
+- [10. Rigidbody 2D.](#10-rigidbody-2d)
+  - [Comprobación de colisiones. BoxCollider2D](#comprobación-de-colisiones-boxcollider2d)
+  - [Detección de colisiones (Trigger)](#detección-de-colisiones-trigger)
+- [11. Añadir un disparo. Instantiate.](#11-añadir-un-disparo-instantiate)
+  - [Movimiento del disparo. GetComponent.](#movimiento-del-disparo-getcomponent)
+  - [Destruir enemigos.](#destruir-enemigos)
+- [12. Explosión usando un sistema de partículas.](#12-explosión-usando-un-sistema-de-partículas)
 
 
 # 1. <a name="_apartado1"></a> Nuestro primer Proyecto
@@ -468,6 +467,334 @@ Si desplegamos **Overrides** nos permite aplicar los cambios que hemos realizado
 Al aplicarlo, todos los demás enemigos, que están basados en el prefab, también tendrán la animación, y si creamos algún enemigo nuevo, a partir del prefab, la tendrán también.
 
 
+# 9. <a name="_apartado9"></a>Editar propiedades desde el inspector.
+
+El concepto que vamos a ver en este apartado lo hemos hecho en apartados anteriores cuando asignábamos el asset de las acciones del Input System.
+
+Unity nos permite hacer que propiedades que hayamos declarado en los Scripts de los objetos sean accesibles no solo desde código, sino también desde el editor, de manera que las podamos cambiar de forma más ágil.
+Se puede hacer de dos formas:
+
+- Declarando la propiedad como public, aunque esto hace que se pueda modificar desde otros objetos del juego.
+- Etiquetando la propiedad como `[SerializeField]`, que es la que utilizaremos más a menudo.
+
+`[SerializeField] float velocidad = 2;`
+
+Así en el script de nuestra nave podemos cambiar la velocidad de private a `[SerializeField]`, apareciendo luego en el inspector:
+
+![Serialize Field](./images/imagen39.jpg)
+
+# 10. <a name="_apartado10"></a>Rigidbody 2D.
+
+A continuación, vamos a ver cómo podemos detectar **choques** entre elementos de nuestro juego, por ejemplo, si un enemigo choca con nuestra nave.
+
+Para ello uno de los dos objetos que chocan deben tener un cuerpo rígido (**RigidBody2d**) asociado.
+
+Vamos a ver el objeto **Nave** centrado en la pantalla. Para ello hacemos doble click sobre la misma.
+
+![Nave](./images/imagen40.jpg)
+
+Ahora, en el inspector pulsamos **AddComponent** y nos dirigimos al apartado **Physics 2D**:
+
+![Add component](./images/imagen41.jpg)
+
+Y dentro de Physics 2D elegiremos **Rigidbody 2D**:
+
+![Rigid Body](./images/imagen42.jpg)
+
+Si en este momento ejecutamos el juego, tenemos un pequeño problema, y es que nuestra nave se “caerá” por la fuerza de la Gravedad, ya que al añadirle un RigidBody, nuestro objeto ha pasado a tener **propiedades físicas**.
+
+Para arreglar este “problema” podemos hacer dos cosas. 
+Una es cambiar el tipo de cuerpo para que en vez de ser dinámico (dynamic), pase a ser cinemático (kinematic), de manera que no le afecten las fuerzas:
+
+![Kinematic](./images/imagen43.jpg)
+
+Otra posible solución, que es la que utilizaremos es dejar el cuerpo como Dynamic, pero hacer que no le afecte la gravedad:
+
+![Gravity](./images/imagen44.jpg)
+
+## Comprobación de colisiones. BoxCollider2D
+
+Ahora que nuestra nave ya tiene un cuerpo rígido vamos a utilizar un componente que nos va a permitir comprobar colisiones. 
+
+Como tanto nuestra nave como los enemigos tienen aproximadamente una forma rectangular, vamos a utilizar el **BoxCollider2D**.
+
+De nuevo lo haremos en el Inspector con **AddComponent->Physics 2D ->BoxCollider2D**.
+
+![Box Collider](./images/imagen45.jpg)
+
+Alrededor del objeto aparecerá un recuadro verde que indica el collider.
+Podemos ajustarlo, pero normalmente se ajustará bastante bien de manera automática…
+
+![Recuadro](./images/imagen46.jpg)
+
+Solo **uno** de los elementos que participa en la colisión necesita un RigidBody, pero **ambos elementos necesitan tener un Collider** y por lo tanto, a nuestro enemigo le añadiremos un BoxCollider2D.
+
+Es interesante hacerlo sobre el prefab, para que el cambio afecte a todos los enemigos.
+
+Si ejecutamos el juego y la nave choca con algún enemigo, veremos que se mueve o gira.
+
+Este comportamiento lo cambiaremos en el siguiente apartado.
+
+## Detección de colisiones (Trigger)
+
+En este juego no vamos a querer que los objetos se desplacen o se muevan al chocar o al ser disparados, sino que queremos que “desaparezcan” al ser tocados.
+
+Para ello vamos a evitar que se desencadenen reacciones físicas cuando ocurra. 
+
+Para ello activaremos el checkbox **Is Trigger** en el **BoxCollider** de la nave.
+
+![Recuadro](./images/imagen47.jpg)
+
+Y además vamos a aprender a detectar la colisión en el Script correspondiente a la nave.
+
+Lo haremos implementando el método **OnTriggerEnter2D**, en el cual de momento simplemente escribiremos un aviso en la consola.
+
+```csharp
+private void OnTriggerEnter2D(Collider2D collision)
+{
+    Debug.Log("Golpeado!");
+}
+```
+
+![Golpeado](./images/imagen48.jpg)
 
 
+# 11. <a name="_apartado11"></a>Añadir un disparo. Instantiate.
+
+
+Para empezar a crear un disparo en nuestro juego vamos a seguir unos pasos que ya hemos seguido con objetos anteriores:
+
+- Añadir la imagen del disparo a la carpeta **Sprites** de nuestro Proyecto. Cambiar su Order in Layer.
+  
+- Arrastrarlo desde la carpeta Sprites a la escena, o bien a la jerarquía para crear un objeto (Game Object) a partir de la imagen.
+- Añadir un **BoxCollider2D**, para que se puedan comprobar colisiones con él. Además, lo marcaremos como **IsTrigger**, ya que no queremos rebotes, sino únicamente detectar la colisión.
+- Al menos uno de los objetos que participen en la colisión deben tener un **RigidBody2D**. Como los enemigos no lo tienen se lo pondremos al disparo, y le pondremos 0 en su **Gravity Scale**.
+
+![Disparo](./images/imagen49.jpg)
+
+El siguiente paso consistirá en arrastrar el disparo desde la jerarquía al panel inferior para **crear un prefab**. 
+
+A continuación, lo eliminaremos de la jerarquía ya que ahora lo crearemos **en tiempo real** de juego.
+
+Vamos a crear un disparo cuando el jugador pulse una tecla determinada. Esto lo haremos desde el Script de la nave, mediante la sentencia Instantiate.
+
+La sentencia Instantiate tiene tres parámetros:
+
+- El tipo del objeto a crear.
+- La posición en la que queremos que aparezca.
+- Su rotación.
+
+Esto supone una serie de pasos que tenemos que realizar para poder instanciar el nuevo disparo:
+
+- Para crear el objeto lo haremos con un atributo accesible desde el editor con `[SerializeField]`:
+
+`[SerializeField] Transform prefabDisparo;`
+
+Y daríamos valor a este atributo desde el editor arrastrando el prefab de disparo hasta esa casilla:
+
+![Arrastrar](./images/imagen50.jpg)
+
+- Para instanciar el disparo, la posición será la misma de la nave (`transform.position`).
+  
+- La rotación será **ninguna** (`Quaternion.identity`).
+  
+Sería por tanto algo así:
+
+`Instantiate(prefabDisparo, transform.position, Quaternion.identity);`
+
+Y, para detectar el momento en el que el usuario pulsa la tecla de disparo, vamos a utilizar el Input System que ya habíamos utilizado para detectar el movimiento de la nave.
+
+Para ello vamos a detectar la acción `Attack` del playerActionMap y detectar en Update cuándo se ha disparado:
+
+```csharp
+public class Nave : MonoBehaviour
+{
+    // Objeto al que le asignaremos el asset con el Input System
+    public InputActionAsset inputActions;
+    private InputAction moveAction;
+    private InputAction fireAction;
+
+    ...
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        // Recogemos el mapa de acciones asignadas al Player
+        var playerActionMap = inputActions.FindActionMap("Player");
+
+        // Recogemos la acción mover
+        moveAction = playerActionMap.FindAction("Move");
+        moveAction.Enable();
+
+        // Recogemos la acción atacar
+        fireAction = playerActionMap.FindAction("Attack");
+        fireAction.Enable();        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Vector2 move = moveAction.ReadValue<Vector2>();
+        // Si el usuario mueve en horizontal
+        float horizontal = move.x;
+
+        transform.Translate(horizontal * velocidad * Time.deltaTime, 0, 0);
+
+        // Detectamos en Update cuando se ha disparado
+        if (fireAction.triggered)
+        {
+            Instantiate(prefabDisparo, transform.position, Quaternion.identity);
+        }            
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Golpeado!");
+    }
+
+}
+
+```
+
+Otra posibilidad es asignar un método al momento que se ejecute el `Attack` (ya no lo detectaríamos en `Update`):
+
+```csharp
+    ...
+    void Start()
+    {
+        ...
+     
+        // Recogemos la acción atacar
+        fireAction = playerActionMap.FindAction("Attack");
+        fireAction.Enable();
+        // Le asignamos un método
+        fireAction.performed += ctx => OnAttack();
+    }
+
+    void OnAttack()
+    {
+        Instantiate(prefabDisparo, transform.position, Quaternion.identity);
+    }
+    ...
+```
+Al pulsar el botón de ataque (la tecla Enter o el botón izquierdo del ratón) aparecerá nuestro disparo (aunque de momento no se moverá, debemos mover la nave para poder verlo…):
+
+![Disparo](./images/imagen51.jpg)
+
+## Movimiento del disparo. GetComponent.
+
+En el apartado anterior hemos aprendido a crear un disparo, pero el mismo se quedaba detenido en el sitio donde se creaba. 
+
+Vamos a hacer que se mueva cambiando sus propiedades, en este caso la velocidad.
+
+Para poder cambiar las propiedades del disparo necesitamos guardar en una variable el objeto que genera `Instantiate`, que es del tipo `Transform`.
+
+```csharp
+Transform disparo = Instantiate(prefabDisparo, 
+                    transform.position, Quaternion.identity);
+```
+
+Ahora tendremos que buscar la velocidad, del componente RigidBody2D, del GameObject asociado al disparo y decir que sea una velocidad vertical:
+
+```csharp
+disparo.gameObject.GetComponent<Rigidbody2D>().linearVelocity = 
+                            new Vector3(0, velocidadDisparo, 0);
+```
+
+Siendo `velocidadDisparo` una variable privada:
+
+`private float velocidadDisparo = 2;`
+
+Utilizaremos en el futuro `GetComponen`t para poder acceder a propiedades de objetos de nuestro juego.
+
+Si ejecutamos nuestro juego veremos que los disparos suben verticalmente tras ser creados:
+
+![Disparo](./images/imagen52.jpg)
+
+Hay un pequeño problema con los disparos y es que estos no se “destruyen” nunca, sino que siguen subiendo, aunque se salgan de la pantalla.
+
+Para solucionar esto vamos a crear un **Script** en el prefab de Disparo.
+
+Para crear un Script en un Prefab, simplemente lo seleccionamos y seguimos los mismos pasos que al crearlo con un objeto.
+
+En este nuevo Script simplemente vamos a hacer que el objeto se destruya cuando supere una cierta posición:
+
+```csharp
+    void Update()
+    {
+        if (transform.position.y > 5)
+            Destroy(gameObject);
+    }
+```
+
+No es una solución demasiado elegante. Más adelante colocaremos un **collider**, y destruiremos el objeto cuando toque ese collider. 
+
+Otra opción es utilizar el método `OnBecameInvisible` que se ejecuta cuando el objeto deja de ser visible por la cámara:
+
+```csharp
+    private void OnBecameInvisible()
+    {
+        //Debug.Log("Posicion: " + transform.position);
+        Destroy(gameObject);
+    }
+```
+
+Ya que estamos trabajando con el Script del disparo podríamos haberle puesto la velocidad en el mismo en vez de al instanciarlo en la nave, dentro de `Start`:
+
+```csharp
+    void Start()
+    {       
+        GetComponent<Rigidbody2D>().linearVelocity = new Vector3(0,
+velocidadDisparo, 0);
+    }
+```
+
+## Destruir enemigos.
+
+Es fácil conseguir que un disparo destruya un enemigo. 
+
+Podría bastar comprobando si el disparo colisiona con algo utilizando el método OnTriggerEnter2D en el **script del disparo** y destruyendo el objeto correspondiente:
+
+```csharp
+private void OnTriggerEnter2D(Collider2D other)
+{
+    Destroy(other.gameObject);
+}
+```
+
+Si probamos ahora nuestro juego nos encontramos que al disparar **la Nave también se destruye**, cosa lógica ya que el disparo sale de ella.
+
+Para solucionar este problema vamos a añadir una **etiqueta** a los Enemigos, para luego poder, mediante esa etiqueta, comprobar si el objeto con el que colisiona el disparo es de tipo Enemigo.
+
+**Importante**. Lo vamos a hacer en el prefab. Para ello lo elegimos y nos vamos en el Inspector justo debajo del nombre donde aparece un desplegable Tag donde ya hay definidas una serie de etiquetas.
+
+Nosotros vamos a crear una nueva:
+
+![Etiqueta](./images/imagen53.jpg)
+
+Y crearemos una nueva con el nombre Enemigo:
+
+![Etiqueta](./images/imagen54.jpg)
+
+Podemos elegir ahora esa etiqueta:
+
+![Etiqueta](./images/imagen55.jpg)
+
+Una vez que el prefab (y por tanto todos los objetos creados a partir de él) tiene la etiqueta, podemos discriminar en el Script del disparo si el objeto colisionado es un Enemigo.
+
+Además, destruiremos también el propio disparo:
+
+```csharp
+private void OnTriggerEnter2D(Collider2D other)
+{
+    if (other.tag == "Enemigo")
+    {
+        Destroy(other.gameObject);
+        // Destruimos también el propio disparo
+        Destroy(gameObject);
+    }
+}
+```
+
+# 12. <a name="_apartado12"></a>Explosión usando un sistema de partículas.
 
