@@ -1,27 +1,37 @@
 ﻿
 # Tema 1. Primer contacto con 2D
 
-- [Tema 1. Primer contacto con 2D](#tema-1-primer-contacto-con-2d)
-- [1.  Nuestro primer Proyecto](#1--nuestro-primer-proyecto)
-- [2. El Entorno de Unity](#2-el-entorno-de-unity)
-- [3. Imagen de fondo](#3-imagen-de-fondo)
-- [4. Nave. Nuestro primer script.](#4-nave-nuestro-primer-script)
-  - [Moviendo la nave. Nuestro primer Script.](#moviendo-la-nave-nuestro-primer-script)
-  - [Movimiento de la nave independiente del equipo](#movimiento-de-la-nave-independiente-del-equipo)
-- [5. Creación de un enemigo con movimiento independiente.](#5-creación-de-un-enemigo-con-movimiento-independiente)
-  - [Más enemigos. Grupos de objetos.](#más-enemigos-grupos-de-objetos)
-- [6. Primer contacto con los prefabs.](#6-primer-contacto-con-los-prefabs)
-- [7. Un sprite animado.](#7-un-sprite-animado)
-- [8. Aplicando cambios al prefab.](#8-aplicando-cambios-al-prefab)
-- [9. Editar propiedades desde el inspector.](#9-editar-propiedades-desde-el-inspector)
-- [10. Rigidbody 2D.](#10-rigidbody-2d)
-  - [Comprobación de colisiones. BoxCollider2D](#comprobación-de-colisiones-boxcollider2d)
-  - [Detección de colisiones (Trigger)](#detección-de-colisiones-trigger)
-- [11. Añadir un disparo. Instantiate.](#11-añadir-un-disparo-instantiate)
-  - [Movimiento del disparo. GetComponent.](#movimiento-del-disparo-getcomponent)
-  - [Destruir enemigos.](#destruir-enemigos)
-- [12. Explosión usando un sistema de partículas.](#12-explosión-usando-un-sistema-de-partículas)
+[1. Nuestro primer Proyecto](#_apartado1)
+   
+[2. El Entorno de Unity](#_apartado2)
 
+[3. Imagen de fondo](#_apartado3)
+
+[4. Nave. Nuestro primer script](#_apartado4)
+
+[5. Creación de un enemigo con movimiento independiente](#_apartado5)
+
+[6. Primer contacto con los prefabs](#_apartado6)
+
+[7. Un Sprite animado](#_apartado7)
+
+[8. Aplicando cambios al Prefab](#_apartado8)
+
+[9. Editar propiedades desde el inspector.](#_apartado9)
+
+[10. RigidBody 2D](#_apartado10)
+
+[11. Añadir un disparo. Instantiate](#_apartado11)
+
+[12. Explosión usando un sistema de partículas](#_apartado12)
+
+[13. Reproducir un sonido](#_apartado13)
+
+[14.	Disparo de enemigos. Corrutinas](#_apartado14)
+
+15.	Interfaz de usuario	47
+16.	Pantalla de bienvenida.	50
+17.	Mejoras propuestas.	54
 
 # 1. <a name="_apartado1"></a> Nuestro primer Proyecto
 
@@ -561,7 +571,6 @@ private void OnTriggerEnter2D(Collider2D collision)
 
 # 11. <a name="_apartado11"></a>Añadir un disparo. Instantiate.
 
-
 Para empezar a crear un disparo en nuestro juego vamos a seguir unos pasos que ya hemos seguido con objetos anteriores:
 
 - Añadir la imagen del disparo a la carpeta **Sprites** de nuestro Proyecto. Cambiar su Order in Layer.
@@ -796,5 +805,198 @@ private void OnTriggerEnter2D(Collider2D other)
 }
 ```
 
+
 # 12. <a name="_apartado12"></a>Explosión usando un sistema de partículas.
+
+Vamos a crear un efecto de **explosión** usando un **sistema de partículas de Unity**.
+
+Para ello en la jerarquía, pulsaremos el botón derecho y elegiremos la opción **Effects->Particle System**.
+ 
+![Particulas](./images/imagen56.jpg)
+
+En la pantalla aparecerán unas partículas que suben hacia arriba y que como todo lo que hacemos en Unity podremos personalizar en el Inspector, donde tenemos muchas opciones para ello.
+ 
+![Particulas2](./images/imagen57.jpg)
+
+Vamos a retocar algunas de estas opciones.
+Para que las **partículas** no salgan solo hacia arriba, podemos usar como forma (Shape) una **Sphere** en vez de un **Cone**.
+Y también podemos cambiar su **Start Color** para que sean amarillas en vez de blancas: 
+ 
+![Particulas2](./images/imagen58.jpg)
+
+Podemos hacer que no se repita quitando la propiedad **Looping**, y bajar el tiempo de duración **Duration** a 1 o incluso 0.5 segundos:
+
+![Particulas3](./images/imagen59.jpg)
+
+ 
+También podemos cambiarle el tiempo de vida para que las partículas no avancen tanto, de 5 a 0,2 segundos:
+ 
+![Particulas4](./images/imagen60.jpg)
+
+
+Y para que salgan más partículas podemos cambiar dentro del apartado **Emission**, la propiedad **Rate over time** de 10 a 30:
+ 
+![Particulas5](./images/imagen61.jpg)
+
+Es muy posible que necesitemos cambiar el **Order in Layer** para que aparezca por encima del fondo:
+ 
+![Particulas6](./images/imagen62.jpg)
+
+Por último, nos queda **instanciar** ese sistema de partículas cuando nos interese. Para ello haremos algo parecido a lo que hicimos con el disparo.
+
+En primer lugar, **crearemos un prefab** a partir del objeto.
+
+A continuación, en la clase `Disparo` le añadiremos un atributo accesible desde el editor:
+
+`[SerializeField] Transform prefabExplosion;`
+
+Arrastraremos desde le prefab a la casilla que nos aparece ahora en Disparo para vincularlo:
+ 
+![Particulas7](./images/imagen63.jpg)
+
+Y, por último, en el evento OnTriggerEnter2D de la clase disparo instanciamos para que se lance la explosión en el sitio donde está el enemigo:
+
+```csharp
+Instantiate(prefabExplosion,     
+                other.transform.position, Quaternion.identity);
+```
+
+De hecho, deberíamos **destruir también el objeto explosión**.
+
+Lo vamos a hacer con `Destroy`, que nos permite indicar cuánto tiempo debe transcurrir. Nosotros le pondremos 1 segundo, quedando así finalmente `OnTriggerEnter2D`:
+
+```csharp
+private void OnTriggerEnter2D(Collider2D other)
+{
+    if (other.tag == "Enemigo")
+    {
+        // Instanciamos la explosión.
+        Transform explosion = Instantiate(prefabExplosion,
+                    other.transform.position, Quaternion.identity);
+
+        Destroy(other.gameObject);
+        Destroy(explosion.gameObject, 1f);
+        // Destruimos también el propio disparo
+        Destroy(gameObject);
+    }
+}
+```
+
+# 13. <a name="_apartado13"></a>Reproducir un sonido.
+
+Una de las formas de reproducir un sonido en Unity es hacerlo asociado a un objeto (`GameObject`). Para ello necesitamos:
+
+- Un **Audio Listener**, encargado de lanzar la reproducción de los sonidos. Este Audio Listener viene incorporado, ya que tenemos uno en la cámara principal
+  
+- Un **Audio Source**, que se añade al elemento del juego que nos interese. En nuestro caso lo vamos a añadir a la nave para que haga un sonido cuando dispare. 
+Lo añadiremos en el Inspector mediante el botón Add Component, buscandolo en la categoría, o tecleando en el buscador:
+
+![Sonido1](./images/imagen64.jpg)
+
+El **Audio Source** tiene al incorporarlo propiedades que le permiten meter un clip de sonido (**AudioClip**), silenciarlo (**Mute**) o ejecutarlo en bucle (**Loop**):
+
+![Sonido2](./images/imagen65.jpg)
+
+Para añadir el sonido crearemos una carpeta **Sounds** en los Assets y arrastraremos los clips de sonido que queramos utilizar:
+
+![Sonido3](./images/imagen66.jpg)
+
+
+Y arrastraremos ese sonido a la propiedad AudioResource del AudioSource de la nave:
+
+![Sonido4](./images/imagen67.jpg)
+
+
+Ya únicamente nos queda añadir el código para que se reproduzca el sonido. Lo podemos hacer dentro del método que habíamos asignado al `Attack`:
+
+```csharp
+    void OnAttack()
+    {
+        // Reproducimos el sonido
+        GetComponent<AudioSource>().Play();
+
+        Transform disparo = Instantiate(prefabDisparo, transform.position, Quaternion.identity);
+
+        disparo.gameObject.GetComponent<Rigidbody2D>().linearVelocity =
+                            new Vector3(0, velocidadDisparo, 0);
+    }
+
+```
+
+Más adelante veremos otra forma de reproducir el sonido, ya que, si nuestro objeto fuera destruido, el sonido se cortará bruscamente…
+
+
+# 14. <a name="_apartado14"></a>Disparo de Enemigos. Corrutinas.
+
+Sabemos muchos de los pasos que debemos hacer para que un enemigo dispare, ya que es similar a lo que hicimos para conseguir que fuera la nave la que disparara:
+
+- Buscar un **Sprite** que represente el disparo
+  
+- Crear un **GameObject** a partir de él.
+- Ajustar su capa para que esté por encima del fondo.
+- Añadir un **Collider**, y si fuera necesario un **RigidBody**. 
+- Convertirlo en un **prefab**.
+- **Instanciar** ese prefab cuando queremos que aparezca el disparo.
+- Añadirle **velocidad** tras instanciarlo
+- Comprobar si **colisiona** con nuestra nave.
+
+Pero hay dos cosas que de momento no sabemos hacer:
+- Cómo contar las vidas restantes cuando un disparo impacte sobre la nave, y los puntos obtenidos al darle a un enemigo. Esto lo aprenderemos más adelante.
+  
+- Cómo hacer que los enemigos disparen cada cierto tiempo al azar. Esto lo veremos a continuación:
+  
+Podríamos hacerlo generando un número al azar en el Update y si ese número supera un valor creamos el disparo. 
+El problema que nos plantea es que estaríamos generando muchos números y además dependemos del número de *fps*.
+
+Lo que vamos a hacer es **generar un número al azar** que representará un tiempo que hay que esperar, y transcurrido ese tiempo lanzaremos un método.
+
+En Unity esto se hace:
+- Llamamos a la función con `StartCoroutine`.
+  
+- La función que llamemos debe ser de tipo `IEnumerator`.
+  
+- Para hacer las pausas utilizamos `yield return new WaitForSeconds(n)`.
+  
+Para empezar a familiarizarnos vamos a ver en primer lugar como hacer aparecer (en el script del enemigo) un mensaje en la consola tres segundos después de que se cree un enemigo:
+
+void Start()
+{
+ 
+}
+
+IEnumerator Disparar()
+{
+ 	yield return new WaitForSeconds(3);
+ 
+}
+
+**Vamos a hacer ahora que aparezca un disparo cada cierto tiempo:**
+
+En primer lugar, tendremos que hacer los pasos para **crear el prefab de disparo** del enemigo. 
+
+Ya los conocemos porque son similares a los que hicimos con el disparo de nuestra nave: **crear** el objeto a partir del Sprite, asignarle un **RigidBody** con gravedad 0, crear el **prefab**, y añadirle un **script** para darle velocidad y **eliminarlo** cuando salga de la pantalla…
+
+Una vez realizados esos pasos vamos a **instanciar el disparo** desde el Script de Enemigo. 
+
+Lo vamos a hacer generando un **valor aleatorio entre dos valores**, e instanciaremos el prefab (recordad ponerlo como **SerializeField**) y volveremos a llamar a la función para el siguiente disparo:
+
+```csharp
+IEnumerator Disparar()
+{
+    float pausa = Random.Range(5.0f, 11.0f);
+    yield return new WaitForSeconds(pausa);
+
+    Transform disparo = Instantiate(prefabDisparoEnemigo,
+                    transform.position, Quaternion.identity);
+
+    // Esta línea no es necesaria si lo hemos hecho en el Start del disparo enemigo
+    disparo.gameObject.GetComponent<Rigidbody2D>().linearVelocity =
+                      new Vector3(0, velocidadDisparo, 0);
+
+    StartCoroutine(Disparar());
+}
+
+```
+Tendríamos que implementar también qué ocurre cuando colisionamos con la nave, y destruir el disparo enemigo cuando se salga de la pantalla.
+
 
