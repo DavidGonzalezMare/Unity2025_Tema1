@@ -27,11 +27,13 @@
 
 [13. Reproducir un sonido](#_apartado13)
 
-[14.	Disparo de enemigos. Corrutinas](#_apartado14)
+[14. Disparo de enemigos. Corrutinas](#_apartado14)
 
-15.	Interfaz de usuario	47
-16.	Pantalla de bienvenida.	50
-17.	Mejoras propuestas.	54
+[15. Interfaz de usuario](#_apartado15)
+
+[16. Pantalla de bienvenida](#_apartado16)
+
+[17. Mejoras propuestas](#_apartado17)
 
 # 1. <a name="_apartado1"></a> Nuestro primer Proyecto
 
@@ -959,16 +961,18 @@ En Unity esto se hace:
   
 Para empezar a familiarizarnos vamos a ver en primer lugar como hacer aparecer (en el script del enemigo) un mensaje en la consola tres segundos después de que se cree un enemigo:
 
+```csharp
 void Start()
 {
- 
+    StartCoroutine(Disparar());
 }
 
 IEnumerator Disparar()
 {
  	yield return new WaitForSeconds(3);
- 
+    Debug.Log("Hola");
 }
+```
 
 **Vamos a hacer ahora que aparezca un disparo cada cierto tiempo:**
 
@@ -993,10 +997,181 @@ IEnumerator Disparar()
     disparo.gameObject.GetComponent<Rigidbody2D>().linearVelocity =
                       new Vector3(0, velocidadDisparo, 0);
 
+    // Volvemos a llamar a la Corrutina
     StartCoroutine(Disparar());
 }
 
 ```
 Tendríamos que implementar también qué ocurre cuando colisionamos con la nave, y destruir el disparo enemigo cuando se salga de la pantalla.
+
+
+# 15. <a name="_apartado15"></a> Interfaz de Usuario.
+
+Vamos a utilizar las herramientas de creación de interfaces de usuario dentro de la jerarquía para poder añadir un texto en el que demos información de nuestro juego (puntos, vidas, nivel…). Para ello vamos a utilizar el componente Text Mesh Pro:
+
+![Interfaz1](./images/imagen68.jpg)
+
+A continuación, nos pedirá que instalemos los componentes esenciales. También se puede instalar ejemplos y extras aunque de momento no será necesario:
+
+![Interfaz2](./images/imagen69.jpg)
+
+Al hacerlo aparece un **Canvas** y también un **EventSystem**. El canvas actuará como contenedor de toda la interfaz de usuario.
+
+Si hacemos doble click sobre el **Canvas**, este aparecerá en grande y la escena de juego en pequeño abajo a la izquierda:
+
+![Interfaz3](./images/imagen70.jpg)
+
+El texto puede aparecer en el centro o en un lado (podemos resetear su Transform para que aparezca centrado.)
+
+Podemos cambiar propiedades de ese texto como su alineación, su tamaño y su color, así como el texto que aparece en el mismo:
+
+![Interfaz4](./images/imagen71.jpg)
+
+Si queremos mover la posición del texto lo podemos hacer con la Herramienta mover:
+
+![Interfaz5](./images/imagen72.jpg)
+
+Y podemos **anclarlo** para que no tengamos problemas con distintas configuraciones de pantalla con la propiedad **Rect Transform**. De momento lo vamos a anclar a la parte superior izquierda:
+
+![Interfaz6](./images/imagen73.jpg)
+
+También podemos hacer que el **Canvas** se escale con el tamaño de pantalla:
+
+![Interfaz7](./images/imagen74.jpg)
+
+A continuación, vamos a ver cómo **modificar el texto desde código**. 
+
+Para ello debemos asociarlo a un **Game Object**. 
+
+Como de momento no hemos creado ningún objeto que represente a toda la aplicación, lo vamos a hacer con el objeto Nave.
+
+En el script de Nave crearemos un atributo de ese tipo. Podría ser público si lo queremos modificar desde otra clase, en otro caso nos bastaría con 
+
+`[SerializeField] TextMeshProUGUI textoSaludo;`
+
+Para cambiar el texto utilizaríamos la propiedad text, por ejemplo en el evento de Ataque:
+
+```csharp
+    void OnAttack()
+    {
+        ...
+
+        textoSaludo.text = "Hola. Se ha pulsado el disparo";
+    }
+
+```
+Pero antes de probarlo, debemos enlazar el elemento de texto que habíamos creado con el atributo en el Script de la Nave en el interfaz:
+
+![Interfaz7](./images/imagen75.jpg)
+
+ 
+En el futuro ese texto nos servirá para poner información relevante del juego como número de vidas, puntos…
+
+# 16. <a name="_apartado16"></a> Pantalla de Bienvenida.
+
+Unity nos permite tener **distintas escenas** en nuestro juego, para poder por ejemplo tener varios niveles o ventanas adicionales, como bienvenida, puntuación…
+
+Vamos a empezar cambiando el nombre de la pantalla que tenemos actualmente de SampleScene a **Nivel1**. Es importante haber **guardado** antes los cambios o se perderán.
+
+Lo haremos en la ventana de proyecto dentro de **Assets->Scenes**.
+
+A continuación, crearemos una nueva escena dando al botón derecho **Create->Scene**. Le podemos dar el nombre **Menu**:
+
+![Bienvenida1](./images/imagen76.jpg)
+
+
+Al hacer doble click en ella vemos que la jerarquía está lógicamente vacía:
+
+![Bienvenida2](./images/imagen77.jpg)
+
+ 
+Vamos a **añadir un texto**, y cambiar su tamaño, posición, color, texto…
+
+![Bienvenida3](./images/imagen78.jpg)
+
+
+Ahora vamos a añadir un botón. Los pasos son parecidos. En la jerarquía pulsaremos botón derecho UI->Button - TextMeshPro.
+
+![Bienvenida3](./images/imagen79.jpg)
+
+ 
+Nos aparecerá un botón con el aspecto por defecto. Vamos a cambiarle el texto, color, tamaño, posición hasta ajustarlo a lo que nos apetezca.
+ 
+![Bienvenida5](./images/imagen80.jpg)
+
+Para poder cambiar el texto del botón se hace con el **Text** que “cuelga” del mismo.
+
+Ahora debemos asociar el **evento click** de ese botón. Creamos un **script** para ese botón tal y como hemos hecho para el resto de Game Objects.
+
+En ese script añadiremos el siguiente using:
+
+`using UnityEngine.SceneManagement;`
+
+y el siguiente método:
+
+```csharp
+public void LanzarJuego()
+{
+    SceneManager.LoadScene("Nivel1");
+}
+```
+
+Ahora, **al seleccionar el botón** en la jerarquía, aparecerá en el inspector un apartado llamado **OnClick** con un símbolo + que nos permite añadir comportamientos. 
+
+Al pulsar **+**, aparece un apartado llamado **Runtime object** en el que debemos indicarle en qué objeto tiene que buscar las funciones que se puedan asociar a ese evento **OnClick**. 
+
+Arrastraremos el botón desde la jerarquía:
+
+![Bienvenida6](./images/imagen81.jpg)
+
+ 
+Y ahora podemos desplegar la lista de funciones disponibles entre las que debería estar LanzarJuego(). La elegimos y de esa manera se asocia al click del botón:
+
+![Bienvenida6](./images/imagen82.jpg)
+
+ 
+Si probamos nuestro juego, lanzándolo desde la escena **Menú**, al pulsar el botón de **Jugar** debería cargar la escena de **Nivel1**.
+
+Podemos tener problemas a la hora de cargar escenas. Nos aparecerá el siguiente mensaje:
+
+![Bienvenida7](./images/imagen83.jpg)
+
+
+ 
+Para solucionarlo debemos entrar en **File -> Build Profiles**.
+ 
+Y, en el perfil de Windows añadir todas nuestras escenas:
+
+![Bienvenida8](./images/imagen84.jpg)
+
+![Bienvenida9](./images/imagen85.jpg)
+
+
+ 
+ 
+# 17. <a name="_apartado17"></a> Mejoras propuestas.
+
+
+Vamos a plantear una serie de mejoras que podéis realizar con los conocimientos actuales:
+
+- Evitar que la nave salga por los **laterales**.
+  
+- **Sumar puntos** (por ejemplo 10) cada vez que matemos a un enemigo.
+  
+- Que haya más enemigos. Los podemos crear en diseño, o mediante **Instantitate**.
+- Cada vez que nos golpee un disparo enemigo o un enemigo en sí, **perdamos una vida** (de un total de 3).
+- Mostrar en pantalla los **puntos** y las **vidas** actuales
+- Volver a la pantalla inicial si se pierden todas las vidas
+- Tener **varios niveles**. Al terminar con todos los enemigos de un nivel, pasaremos al nivel siguiente. De momento para poder guardar los puntos y las vidas podemos utilizar atributos static. En el futuro veremos cómo manejar esto de otra manera.
+
+
+
+
+
+
+
+
+
+
 
 
