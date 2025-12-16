@@ -35,23 +35,32 @@
 
 [17. Mejoras propuestas](#_apartado17)
 
+<br>
+
 # 1. <a name="_apartado1"></a> Nuestro primer Proyecto
 
 Una vez tengamos instalado Unity Hub y la versión elegida de Unity, normalmente nuestra forma de empezar a trabajar será mediante Unity Hub.
 Cuando entremos en Unity Hub, iremos a la pestaña Projects, que nos permitirá abrir los proyectos que tengamos, así como crear nuevos proyectos pulsando el botón New:
 
-![Nuevo Proyecto](./images/imagen01.jpg)
+![Nuevo Proyecto](./images/imagen01a.jpg)
+
+<br>
 
 Introduciremos en la siguiente pantalla el nombre y tipo del proyecto (es posible que tengamos que descargar la plantilla):
 
-![Template](./images/imagen02.jpg)
+![Template](./images/imagen01b.jpg)
+
+<br>
 
 Y ya podremos crearlo, en nuestro caso nuestro proyecto se va a llamar Marcianos y será un juego en 2D:
 
-![Nuevo Proyecto](./images/imagen03.jpg)
+![Nuevo Proyecto](./images/imagen01c.jpg)
+
+<br>
 
 Durante unos instantes se cargará nuestro proyecto en el entorno de Unity…
 
+<br>
 
 # 2. <a name="_apartado2"></a>El Entorno de Unity
 
@@ -59,7 +68,9 @@ Vamos a describir brevemente las distintas zonas de la pantalla por defecto de U
 
 Si no os sale de la siguiente manera podéis cambiar en el desplegable de arriba a la derecha el Layout a Default.
 
-![Default](./images/imagen04.jpg)
+![Default](./images/imagen02a.jpg)
+
+<br>
 
 - La zona central de la pantalla está ocupada por la zona Escena (**Scene**). En ella tendremos la parte visible de nuestro juego. Nos podremos mover por la misma y acercarnos o alejarnos para ver en detalle elementos que formarán parte del juego.
 En esa misma zona, en la pestaña **Game**, se ejecutaría el juego.
@@ -72,12 +83,13 @@ En esa misma zona, en la pestaña **Game**, se ejecutaría el juego.
 
 - La barra superior nos permite mover, rotar y cambiar el tamaño de los objetos. De momento únicamente vamos a utilizar el botón Play que nos permite ejecutar nuestro juego (de momento únicamente nos saldrá una pantalla en azul).
 
-![Play](./images/imagen05.jpg)
+![Play](./images/imagen02b.jpg)
 
 Para parar el juego pulsamos el botón Stop:
 
-![Stop](./images/imagen06.jpg)
+![Stop](./images/imagen02c.jpg)
 
+<br>
 
 # 3. <a name="_apartado3"></a>Imagen de fondo
 
@@ -87,18 +99,24 @@ Vamos a crear una carpeta en nuestro proyecto para guardar imágenes.
 
 En el panel inferior, dentro de **Assets**, pulsaremos el botón derecho y elegiremos la opción **Create->Folder**. Crearemos una carpeta llamada **Sprites**.
 
-![Crear carpeta](./images/imagen07.jpg)
+![Crear carpeta](./images/imagen03a.jpg)
+
+<br>
 
 Para introducir imágenes en esta carpeta las arrastraremos desde el explorador de Windows a la carpeta dentro de Unity. Se os ha dejado un fichero llamado SpaceHawks donde tenéis algunos recursos.
 
 En nuestro caso añadiremos el fichero **fondo960.png**.
 En ese momento veremos la miniatura dentro de la carpeta:
 
-![Fondo](./images/imagen08.jpg)
+![Fondo](./images/imagen03b.jpg)
+
+<br>
 
 A continuación, vamos a crear un **objeto de juego (Game Object)** a partir de esa imagen. Una posible forma, y la más sencilla es arrastrar la imagen desde el panel inferior a la escena (**Scene**). De momento no queda centrado:
 
-![Fondo](./images/imagen09.jpg)
+![Fondo](./images/imagen03c.jpg)
+
+<br>
 
 Para centrar la imagen vamos a utilizar el panel **Inspector** que aparece a la derecha. Recordad que el panel inspector nos permite modificar las propiedades de un **objeto**.
 
@@ -106,43 +124,60 @@ En este caso vamos a cambiar la propiedad transform. El **Transform** es usado p
 
 En Unity, el centro de la pantalla corresponde a las coordenadas (0,0), por lo que bastaría con cambiar el valor de X y el de Y en la posición, para hacer que ambos sean cero:
 
-![Coordenadas](./images/imagen10.jpg)
+![Coordenadas](./images/imagen3d.jpg)
+
+<br>
 
 Una forma más rápida de hacer esto es desplegar los tres puntos que aparecen a la derecha del Transform y elegir la opción **Reset**:
 
-![Reset](./images/imagen11.jpg)
+![Reset](./images/imagen3e.jpg)
+
+<br>
 
 También vamos a cambiar el nombre del objeto de fondo960 a Fondo:
 
-![Cambio](./images/imagen12.jpg)
+![Cambio](./images/imagen3f.jpg)
+
+<br>
 
 Si volvemos a lanzar el juego, se verá el fondo centrado, pero con un borde azul alrededor:
 
-![Azul](./images/imagen13.jpg)
+![Azul](./images/imagen3g.jpg)
+
+<br>
 
 Para cambiar esto, vamos a elegir la cámara (**Main Camera**) dentro de la jerarquía (panel izquierdo **Hierarchy**) y el inspector nos mostrará sus propiedades:
 
-![Main Camera](./images/imagen14.jpg)
+![Main Camera](./images/imagen3h.jpg)
+
+<br>
 
 Para que la cámara se ajuste mejor a nuestro fondo podemos cambiar su tamaño en el inspector con la propiedad **Size**, bien dándole un valor, o más sencillo, haciendo click con el ratón y desplazando a izquierda/derecha:
 
-![Size](./images/imagen15.jpg)
+![Size](./images/imagen3i.jpg)
+
+<br>
 
 Quedará algo de margen por los lados, ya que el fondo está diseñado para 4:3, en lugar de 16:9.
 
 Podemos pulsar **Play** para ver cómo está quedando el juego con el nuevo fondo…
 Podemos desanclar la pantalla **Game** para verla más grande e incluso maximizarla:
 
-![Desanclar](./images/imagen16.jpg)
+![Desanclar](./images/imagen3j.jpg)
+
+<br>
 
 Incluso podemos elegir **Play Maximized** para ver el juego a pantalla completa.
 
 Podemos también cambiar el color de fondo de la cámara para, por ejemplo, tener un color gris similar al del fondo:
 
-![Color Fondo](./images/imagen17.jpg)
+![Color Fondo](./images/imagen3k.jpg)
 
 Utilizamos para ello la propiedad **Background**.
 Debemos ser cuidadosos a la hora de no hacer cambios durante la ejecución del juego, ya que puede ocurrir que esos cambios no se mantengan al detener la ejecución.
+
+<br>
+<br>
 
 # 4. <a name="_apartado4"></a>Nave. Nuestro primer script.
 
@@ -155,7 +190,9 @@ Al arrastrar a la escena se colocará en el sitio donde soltemos, mientras que a
 
 En este punto podría ocurrir que se nos solapara la imagen de la imagen con la del fondo y que no se viera. Para evitar esto (más adelante lo haremos con Layers) podemos cambiar en el inspector el **Order in Layer** a 1 de la nave.
 
-![Order in Layer](./images/imagen18.jpg)
+![Order in Layer](./images/imagen4a.jpg)
+
+<br>
 
 Ahora vamos a mover la nave a su posición inicial en el juego. Eso lo podemos hacer de varias formas. 
 
@@ -165,8 +202,9 @@ También lo podemos hacer utilizando la herramienta **Mover**, que tenemos en la
 
 Aparecerán entonces dos flechas sobre el objeto que nos permitirán moverlo en horizontal o en vertical (o ambas si utilizamos el recuadro):
 
-![Mover](./images/imagen19.jpg)
+![Mover](./images/imagen4b.jpg)
 
+<br>
 
 ## Moviendo la nave. Nuestro primer Script.
 
@@ -174,23 +212,33 @@ Para añadir comportamientos a los objetos deberemos crear un Script. En Unity l
 
 En primer lugar, crearemos una carpeta Scripts dentro de Assets.
 
-![Carpeta Scripts](./images/imagen20.jpg)
+![Carpeta Scripts](./images/imagen4c.jpg)
+
+<br>
 
 Ahora seleccionaremos la nave y en el inspector pulsaremos el botón **Add Component**:
 
-![Add Component](./images/imagen21.jpg)
+![Add Component](./images/imagen4d.jpg)
+
+<br>
 
 Y en el desplegable que aparece elegiremos New Script:
 
-![New Script](./images/imagen22.jpg)
+![New Script](./images/imagen4e.jpg)
 
-Al cual le daremos el nombre Nave y lo guardaremos en la carpeta **Scripts**. Si hacemos click sobre el script **Nave**, nos aparece su contenido en el inspector:
+<br>
 
-![Script Inspector](./images/imagen23.jpg)
+Al cual le daremos el nombre **Nave** y lo guardaremos en la carpeta **Scripts**. Si hacemos click sobre el script **Nave**, nos aparece su contenido en el inspector:
+
+![Script Inspector](./images/imagen4f.jpg)
+
+<br>
 
 Y haciendo **doble click** sobre el mismo se nos abrirá para poder editarlo.
 
-![Visual Studio](./images/imagen24.jpg)
+![Visual Studio](./images/imagen4g.jpg)
+
+<br>
 
 En principio se debería abrir en el **Visual Studio**. En el menú **Edit->Preferences->External Tools** nos permite elegir el editor de Scripts.
 
@@ -198,11 +246,15 @@ Es muy posible que el editor de Visual Studio no nos haga “sugerencias” resp
 
 Para conseguir tener esas sugerencias debemos instalar desde el Visual Studio Installer:
 
-![Visual Studio Installer](./images/imagen25.jpg)
+![Visual Studio Installer](./images/imagen4h.jpg)
+
+<br>
 
 E instalar los componentes para Desarrollo de juego con Unity:
 
-![Visual Studio Installer](./images/imagen26.jpg)
+![Visual Studio Installer](./images/imagen4i.jpg)
+
+<br>
 
 Volviendo de nuevo al **Script** aparece la clase `Nave` que hereda de `MonoBehaviour` y con dos métodos: `Start` (se lanza al crear el objeto), y `Update` (que se lanza una vez para cada fotograma del juego).
 
@@ -267,7 +319,7 @@ Para comprobar el resultado tendremos que **Grabar los cambios** en Visual Studi
 
 Y debemos asignar **en el inspector** sobre el Script del objeto Nave, el asset del nuevo Input System que se creó por defecto al crear el proyecto:
 
-![Visual Studio Installer](./images/imagen28.jpg)
+![Input System](./images/imagen4j.jpg)
 
 
 Si probamos el juego ahora, veremos que el movimiento resultante es demasiado rápido, ya que dependemos de los fotogramas por segundo.
@@ -304,7 +356,9 @@ De hecho, una prueba rápida puede ser mostrar en la consola de Unity el valor d
 
 La consola nos mostraría datos como estos:
 
-![FPS](./images/imagen27.jpg)
+![FPS](./images/imagen4k.jpg)
+
+<br>
 
 Como vemos, varía mucho la cantidad de fotogramas por segundo.
 
@@ -350,6 +404,9 @@ public class Nave : MonoBehaviour
     }
 }
 ```
+
+<br>
+<br>
 
 # 5. <a name="_apartado5"></a>Creación de un enemigo con movimiento independiente.
 
