@@ -1,4 +1,8 @@
-﻿
+﻿![Union europea](./images/union_europea.jpeg)  ![Generalitat](./images/generalitat.jpeg) ![Mare Nostrum](./images/mare_nostrum.png)
+
+<br>
+<br>
+
 # Tema 1. Primer contacto con 2D
 
 [1. Nuestro primer Proyecto](#_apartado1)
@@ -574,7 +578,7 @@ Se puede hacer de dos formas:
 
 Así en el script de nuestra nave podemos cambiar la velocidad de private a `[SerializeField]`, apareciendo luego en el inspector:
 
-![Serialize Field](./images/imagen39.jpg)
+![Serialize Field](./images/imagen9a.jpg)
 
 <br>
 <br>
@@ -612,6 +616,8 @@ Otra posible solución, que es la que utilizaremos, es dejar el cuerpo como Dyna
 
 ![Gravity](./images/imagen10e.jpg)
 
+<br>
+
 ## Comprobación de colisiones. BoxCollider2D
 
 Ahora que nuestra nave ya tiene un cuerpo rígido vamos a utilizar un componente que nos va a permitir comprobar colisiones. 
@@ -634,6 +640,8 @@ Es interesante hacerlo sobre el prefab, para que el cambio afecte a todos los en
 Si ejecutamos el juego y la nave choca con algún enemigo, veremos que se mueve o gira.
 
 Este comportamiento lo cambiaremos en el siguiente apartado.
+
+<br>
 
 ## Detección de colisiones (Trigger)
 
